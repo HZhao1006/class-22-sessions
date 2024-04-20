@@ -5,6 +5,7 @@ include_once('includes/db.php');
 $session_messages = array();
 $signup_messages = array();
 
+//TODO: 8. how long should our session cookies be good for?
 // cookie duration expiration time in seconds
 define('SESSION_COOKIE_DURATION', 60 * 60 * 1); // 1 hour = 60 sec * 60 min * 1 hr
 
@@ -117,6 +118,7 @@ function password_login($db, &$messages, $username, $password)
 
       // Check password against hash in DB
       if (password_verify($password, $user['password'])) {
+        //TODO: 9. create secure session ID
         // Generate session
         $session = session_create_id();
 
@@ -131,13 +133,17 @@ function password_login($db, &$messages, $username, $password)
         );
         if ($result) {
           // Success, session stored in DB
+          // TODO: 7. create a cookie for the session
 
           // Send this back to the user.
+          //TODO: 11a. set cookie value to session", "TODO: 11b. set session cookie expiration"
           setcookie("session", $session, time() + SESSION_COOKIE_DURATION, '/');
 
           error_log("  login via password successful");
           $current_user = $user;
           return $current_user;
+          // TODO: 10. remember session ID in DB (part II)
+
         } else {
           array_push($messages, "Log in failed.");
         }
@@ -209,7 +215,7 @@ function logout($db, $session)
       array(':session_id' => $session['session'])
     );
   }
-
+  // TODO: 17. delete the session cookie (revert time to expire it)
   // Remove the session from the cookie and force it to expire (go back in time).
   setcookie('session', '', time() - SESSION_COOKIE_DURATION, '/');
 
@@ -287,19 +293,24 @@ function process_session_params($db, &$messages)
 {
   // Is there a session? If so, find it!
   $session = NULL;
+  //TODO: 12. check if a session cookie exists
   if (isset($_COOKIE["session"])) {
     $session_hash = $_COOKIE["session"];
 
+    // TODO: 13. find the session record in the database
     $session = find_session($db, $session_hash);
   }
 
   if (isset($_GET['logout']) || isset($_POST['logout'])) { // Check if we should logout the user
+    // TODO: 16. logout the user
     error_log("  attempting to logout...");
     logout($db, $session);
   } else if (isset($_POST['login'])) { // Check if we should login the user
+    // TODO: 4.  check login form parameters with database to login
     error_log("  attempting to login with username and password...");
     password_login($db, $messages, $_POST['login_username'], $_POST['login_password']);
   } else if ($session) { // check if logged in already via cookie
+    // TODO: 14. login via session record
     error_log("  attempting to login via cookie...");
     cookie_login($db, $session);
   }

@@ -1,5 +1,6 @@
 -- database: ../test.sqlite
 --
+-- TODO: 2
 --- Users ---
 CREATE TABLE users (
   id INTEGER NOT NULL UNIQUE,

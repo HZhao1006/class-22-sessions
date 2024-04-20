@@ -23,6 +23,7 @@ $nav_home_class = "active_page";
     <p>You're running PHP version: <strong><?php echo phpversion(); ?></strong>.</p>
 
     <h2>Sign In</h2>
+    <!-- TODO: 3 -->
 
     <?php echo login_form('/', $session_messages); ?>
 
